@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import "./BottleLibrary.sol";
@@ -25,7 +24,6 @@ contract DriftBottleChain {
 
 
     function sendBottle(string memory message) public {
-        //BottleLibrary.Bottle memory newBottle = BottleLibrary.createBottle(msg.sender, message, block.timestamp);
         BottleLibrary.Bottle memory newBottle = BottleLibrary.createBottle(msg.sender, message, block.timestamp);
         bottles.push(newBottle);
         emit BottleSent(msg.sender, bottles.length - 1);
@@ -47,13 +45,14 @@ contract DriftBottleChain {
         return (randomIndex, receivedBottle.sender, receivedBottle.message, receivedBottle.timestamp);
     }
     
-    function replyBottle(uint256 bottleId, string memory message) public {
+     function replyBottle(uint256 bottleId, string memory message) public {
         require(bottleId < bottles.length, "Invalid bottle ID.");
 
         BottleLibrary.Bottle storage bottleToReply = bottles[bottleId];
-        ReplyLibrary.Reply memory newReply = ReplyLibrary.createReply(msg.sender, message, block.timestamp);
-        ReplyLibrary.Reply storage newReplyStorage = ReplyLibrary.Reply(newReply);
-        bottleToReply.replies.push(newReplyStorage);  
+        //bottleToReply.replies.push(ReplyLibrary.createReply(msg.sender, message, block.timestamp));  
+        bottleToReply.replies.push(ReplyLibrary.Reply(msg.sender, message, block.timestamp)); 
+
+
 
         emit BottleReplied(bottleId, msg.sender);
     }
