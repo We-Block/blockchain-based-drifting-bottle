@@ -26,7 +26,7 @@ contract DriftBottleChain {
 
     function sendBottle(string memory message) public {
         //BottleLibrary.Bottle memory newBottle = BottleLibrary.createBottle(msg.sender, message, block.timestamp);
-        BottleLibrary.Bottle memory newBottle = createBottle(message);
+        BottleLibrary.Bottle memory newBottle = BottleLibrary.createBottle(msg.sender, message, block.timestamp);
         bottles.push(newBottle);
         emit BottleSent(msg.sender, bottles.length - 1);
     }
@@ -47,72 +47,18 @@ contract DriftBottleChain {
         return (randomIndex, receivedBottle.sender, receivedBottle.message, receivedBottle.timestamp);
     }
     
-
-    //function replyBottle(uint256 bottleId, string memory message) public {
-        //require(bottleId < bottles.length, "Invalid bottle ID.");
-
-        //BottleLibrary.Bottle storage bottleToReply = bottles[bottleId];
-        //ReplyLibrary.Reply memory newReply = ReplyLibrary.createReply(msg.sender, message, block.timestamp);
-        //ReplyLibrary.addReply(bottleToReply.replies, newReply);
-
-        //emit BottleReplied(bottleId, msg.sender);
-    //}
-
-    //function replyBottle(uint256 bottleId, string memory message) public {
-        //require(bottleId < bottles.length, "Invalid bottle ID.");
-
-        //BottleLibrary.Bottle storage bottleToReply = bottles[bottleId];
-        //ReplyLibrary.Reply memory newReply = ReplyLibrary.createReply(msg.sender, message, block.timestamp);
-        //ReplyLibrary.addReply(bottleToReply.replies, newReply);
-
-        //emit BottleReplied(bottleId, msg.sender);
-    //}
     function replyBottle(uint256 bottleId, string memory message) public {
         require(bottleId < bottles.length, "Invalid bottle ID.");
 
         BottleLibrary.Bottle storage bottleToReply = bottles[bottleId];
         ReplyLibrary.Reply memory newReply = ReplyLibrary.createReply(msg.sender, message, block.timestamp);
-        bottleToReply.replies.push(newReply);
+        ReplyLibrary.Reply storage newReplyStorage = ReplyLibrary.Reply(newReply);
+        bottleToReply.replies.push(newReplyStorage);  
 
         emit BottleReplied(bottleId, msg.sender);
     }
 
 
-
-    //function getBottleReplies(uint256 bottleId) public view returns (ReplyLibrary.Reply[] memory) {
-    //    require(bottleId < bottles.length, "Invalid bottle ID.");
-    //    return bottles[bottleId].replies;
-    //}
-
-    //function getBottleReplies(uint256 bottleId) public view returns (ReplyLibrary.Reply[] memory) {
-        //require(bottleId < bottles.length, "Invalid bottle ID.");
-        //BottleLibrary.Bottle storage bottle = bottles[bottleId];
-        //ReplyLibrary.Reply[] memory repliesCopy = new ReplyLibrary.Reply[](bottle.replies.length);
-
-        //for (uint256 i = 0; i < bottle.replies.length; i++) {
-            //repliesCopy[i] = bottle.replies[i];
-        //}
-
-        //return repliesCopy;
-    //}
-
-    //function getBottleReplies(uint256 bottleId) public view returns (address[] memory, string[] memory, uint256[] memory) {
-        //require(bottleId < bottles.length, "Invalid bottle ID.");
-        //BottleLibrary.Bottle storage bottle = bottles[bottleId];
-        //uint256 numReplies = bottle.replies.length;
-
-        //address[] memory senders = new address[](numReplies);
-        //string[] memory messages = new string[](numReplies);
-        //uint256[] memory timestamps = new uint256[](numReplies);
-
-        //for (uint256 i = 0; i < numReplies; i++) {
-            //senders[i] = bottle.replies[i].sender;
-            //messages[i] = bottle.replies[i].message;
-            //timestamps[i] = bottle.replies[i].timestamp;
-        //}
-
-        //return (senders, messages, timestamps);
-    //}
 
     function createBottle(string memory message) public {
         BottleLibrary.Bottle memory newBottle = BottleLibrary.createBottle(msg.sender, message, block.timestamp);
@@ -154,7 +100,7 @@ contract DriftBottleChain {
         return messages;
     }
 
-        // Profile functions
+    // Profile functions
     function updateProfile(string memory name, string memory bio) public {
         ProfileLibrary.Profile memory newProfile = ProfileLibrary.createProfile(msg.sender, name, bio);
         profiles[msg.sender] = newProfile;
